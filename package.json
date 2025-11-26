@@ -1,7 +1,7 @@
 {
-    "name": "cvv-average-calculator",
+    "name": "studentintrest",
     "version": "2.0.0",
-    "description": "ClasseViva grade average calculator - Browser extension + Web version (iOS compatible)",
+    "description": "StudentIntrest - Complete ClasseViva client with grades, agenda, noticeboard, didactics, notes, absences, and Google Calendar sync",
     "scripts": {
         "dev:web": "cd web && python3 -m http.server 8080",
         "dev:proxy": "cd proxy && wrangler dev",
@@ -23,15 +23,20 @@
         "spaggiari",
         "browser-extension",
         "ios",
-        "pwa"
+        "pwa",
+        "agenda",
+        "noticeboard",
+        "didactics",
+        "calendar-sync",
+        "google-calendar"
     ],
-    "author": "LucaCraft89",
+    "author": "StudentIntrest Contributors",
     "license": "MIT",
     "devDependencies": {
         "wrangler": "^3.0.0"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/LucaCraft89/StudentIntrest"
+        "url": "https://github.com/gablilli/StudentIntrest"
     }
 }

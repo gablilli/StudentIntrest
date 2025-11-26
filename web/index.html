@@ -1,188 +1,912 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it" translate="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Calculate your ClasseViva grade averages - Works on iOS, Android, and Desktop"
-    />
+    <meta name="description" content="SysRegister - Il tuo registro elettronico ClasseViva" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <title>CVV Average Calculator</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#130909" />
+    <title>SysRegister</title>
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+      /* CSS Variables - matching sysregister-reborn exactly */
+      :root {
+        --text: #f1e4e4;
+        --background: #130909;
+        --primary: #f03333;
+        --secondary: #7f2929;
+        --accent: #c83737;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
       body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        min-height: 100svh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      .grade-badge {
+      /* Scrollbar hidden utility */
+      .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hidden {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      /* Auth Page Styles */
+      .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100svh;
+        max-width: 32rem;
+        margin: 0 auto;
+      }
+
+      .auth-icon-wrapper {
+        position: relative;
+        overflow: hidden;
+        padding: 2.25rem;
+        border-radius: 55px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+      }
+
+      .auth-icon-bg {
+        background-color: var(--secondary);
+        position: absolute;
+        opacity: 0.45;
+        z-index: -1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      .auth-title {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .auth-title h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin: 0;
+      }
+
+      .auth-title p {
+        color: var(--secondary);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+
+      .auth-form-section {
+        flex: 1;
+        display: flex;
+        width: 100%;
+        padding: 0 1.5rem;
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .auth-form {
+        width: 100%;
+      }
+
+      /* Input Styles */
+      .input-label {
+        padding-bottom: 0.25rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--accent);
+        display: block;
+      }
+
+      .input-wrapper {
+        overflow: hidden;
+        position: relative;
+        border-radius: 0.75rem;
+      }
+
+      .input-bg {
+        background-color: var(--secondary);
+        position: absolute;
+        z-index: -1;
+        opacity: 0.25;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .input-field {
+        background: transparent;
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        width: 100%;
+        color: var(--text);
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .input-field::placeholder {
+        color: var(--accent);
+        opacity: 0.35;
+      }
+
+      .input-field:focus {
+        outline: 2px solid var(--primary);
+      }
+
+      .input-group {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .input-group:first-child {
+        margin-top: 0;
+      }
+
+      /* Button Styles */
+      .btn-primary {
+        background-color: var(--primary);
+        color: var(--text);
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        width: 100%;
         cursor: pointer;
-        transition: transform 0.2s;
+        transition: opacity 0.2s;
+        margin-top: 1.75rem;
       }
 
-      .grade-badge:hover {
-        transform: scale(1.1);
+      .btn-primary:hover {
+        opacity: 0.8;
       }
 
-      .overall-average {
-        font-size: 4rem;
-        font-weight: bold;
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
 
-      .period-average {
-        font-size: 2rem;
-        font-weight: bold;
+      .error-text {
+        color: var(--accent);
+        text-align: left;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        width: 100%;
       }
 
-      @media (max-width: 576px) {
-        .overall-average {
-          font-size: 2.5rem;
+      .auth-footer {
+        font-size: 0.875rem;
+        text-align: center;
+        color: var(--secondary);
+        padding: 1.25rem 0 2rem;
+      }
+
+      .auth-footer a {
+        color: var(--secondary);
+      }
+
+      /* Loader */
+      .loader {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--text);
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Main App Layout */
+      .main-app {
+        display: none;
+        overflow-x: hidden;
+      }
+
+      .main-header {
+        padding: 1.5rem;
+        position: relative;
+      }
+
+      .main-header-bg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--secondary);
+        opacity: 0.2;
+        z-index: -1;
+      }
+
+      .main-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .main-header .version {
+        color: var(--accent);
+        font-size: 0.875rem;
+      }
+
+      /* Day Selector */
+      .day-selector-wrapper {
+        position: sticky;
+        z-index: 50;
+        top: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .day-selector-bg-1 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--secondary);
+        opacity: 0.2;
+        z-index: -1;
+      }
+
+      .day-selector-bg-2 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--background);
+        z-index: -2;
+      }
+
+      .day-selector {
+        display: flex;
+        overflow-x: auto;
+        padding: 1rem 0.5rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .day-btn {
+        display: flex;
+        flex-direction: column;
+        padding: 0 0.5rem;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      .day-btn .day-name {
+        color: var(--secondary);
+        width: 100%;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        justify-content: space-between;
+        font-size: 0.875rem;
+      }
+
+      .day-btn .day-number {
+        color: var(--accent);
+        position: relative;
+        text-align: center;
+        font-size: 1.125rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0.625rem;
+        border-radius: 50%;
+        transition: all 0.2s;
+      }
+
+      .day-btn .day-number.selected {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .day-btn .today-dot {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        width: 0.375rem;
+        height: 0.375rem;
+        background-color: var(--primary);
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 48rem;
+        min-height: calc(100svh - 86px - 204px);
+        margin: 0 auto;
+        transform: translateY(-1rem);
+      }
+
+      .content-padding {
+        padding: 1rem;
+      }
+
+      /* Cards */
+      .card {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        position: relative;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .card-bg {
+        background-color: var(--secondary);
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin: 0;
+      }
+
+      .card-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Section Title */
+      .section-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Agenda Item */
+      .agenda-item {
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        overflow: hidden;
+        position: relative;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .agenda-item.completed {
+        opacity: 0.45;
+      }
+
+      .agenda-item-bg {
+        background-color: var(--secondary);
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .agenda-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .agenda-author {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .agenda-time {
+        color: var(--accent);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .agenda-time span {
+        opacity: 0.5;
+        font-size: 0.875rem;
+      }
+
+      .agenda-content {
+        position: relative;
+        overflow: hidden;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        margin-top: 0.75rem;
+      }
+
+      .agenda-content-bg {
+        position: absolute;
+        background-color: var(--accent);
+        z-index: -1;
+        opacity: 0.35;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      /* Checkbox */
+      .checkbox {
+        border-radius: 50%;
+        opacity: 0.5;
+        transition: all 0.2s;
+        border: 2px solid var(--accent);
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .checkbox.checked {
+        background-color: var(--accent);
+      }
+
+      .checkbox svg {
+        color: var(--secondary);
+        transform: translateY(1px);
+      }
+
+      /* Empty State */
+      .empty-state {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        position: relative;
+        opacity: 0.5;
+        padding: 1rem;
+      }
+
+      .empty-state p {
+        color: var(--primary);
+        font-weight: 600;
+        text-align: center;
+        margin: 0;
+      }
+
+      /* Gauge */
+      .gauge {
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .gauge-border {
+        border-color: #525252;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 50%;
+        border-style: solid;
+      }
+
+      .gauge-value-border {
+        border-radius: 50%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-style: solid;
+      }
+
+      .gauge-value-border.red { border-color: #dc2626; }
+      .gauge-value-border.yellow { border-color: #ca8a04; }
+      .gauge-value-border.green { border-color: #16a34a; }
+      .gauge-value-border.gray { border-color: #4b5563; }
+
+      .gauge-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .gauge-value {
+        font-weight: 600;
+      }
+
+      .gauge-suffix {
+        font-weight: 400;
+      }
+
+      .gauge-label {
+        opacity: 0.7;
+      }
+
+      /* Line Progress */
+      .line-progress {
+        display: flex;
+        align-items: flex-start;
+        overflow: hidden;
+        flex-direction: column;
+      }
+
+      .line-progress-label {
+        font-weight: 600;
+        margin-bottom: 0.125rem;
+      }
+
+      .line-progress-bar {
+        position: relative;
+        width: 100%;
+        border-radius: 0.125rem;
+        overflow: hidden;
+      }
+
+      .line-progress-bg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: -1;
+        background-color: var(--secondary);
+        opacity: 0.3;
+      }
+
+      .line-progress-fill {
+        display: block;
+        text-align: right;
+      }
+
+      .line-progress-fill.red { background-color: #dc2626; }
+      .line-progress-fill.yellow { background-color: #ca8a04; }
+      .line-progress-fill.green { background-color: #16a34a; }
+
+      .line-progress-value {
+        font-weight: 600;
+        margin-right: 0.375rem;
+        margin-left: 0.375rem;
+      }
+
+      .line-progress-suffix {
+        font-size: 0.75rem;
+        font-weight: 400;
+      }
+
+      /* Bottom Navbar */
+      .navbar {
+        background-color: #000;
+        z-index: 50;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        box-shadow: 0 -10px 15px -3px var(--accent);
+      }
+
+      .navbar-content {
+        display: flex;
+        align-items: center;
+        padding-top: 1rem;
+        justify-content: space-around;
+      }
+
+      .nav-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .nav-date {
+        height: 28px;
+        width: 28px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        border: 2px solid white;
+        background: none;
+        color: white;
+      }
+
+      .nav-date.active {
+        border-color: var(--accent);
+        background-color: var(--accent);
+        color: black;
+      }
+
+      .nav-date p {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .nav-icon {
+        color: var(--text);
+      }
+
+      .nav-icon.active {
+        color: var(--primary);
+      }
+
+      /* Bottom spacing for navbar */
+      .navbar-spacer {
+        padding-top: 85px;
+      }
+
+      /* Install PWA Prompt */
+      .pwa-prompt {
+        border-radius: 0.75rem;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        position: relative;
+        padding: 1rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #9333ea;
+        color: white;
+        cursor: pointer;
+        border: none;
+        text-align: left;
+      }
+
+      .pwa-prompt:hover {
+        background-color: #7e22ce;
+      }
+
+      .pwa-prompt-bg {
+        background-color: #6b21a8;
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .pwa-prompt-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .pwa-prompt-subtitle {
+        opacity: 0.8;
+        text-align: left;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      /* Lessons Link */
+      .lessons-link {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        position: relative;
+        padding: 1rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .lessons-title {
+        color: var(--text);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .lessons-subtitle {
+        opacity: 0.6;
+        color: var(--primary);
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 640px) {
+        .auth-title h1 {
+          font-size: 1.875rem;
         }
-        .period-average {
-          font-size: 1.5rem;
-        }
+      }
+
+      /* Hidden utility */
+      .hidden {
+        display: none !important;
       }
     </style>
   </head>
   <body>
-    <div class="container">
+    <!-- Auth Page -->
+    <div id="authPage" class="auth-container">
+      <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; flex: 1;">
+        <div class="auth-icon-wrapper">
+          <div class="auth-icon-bg"></div>
+          <svg width="100" height="100" viewBox="0 0 105 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M59.0625 30.625H45.9375C37.6879 30.625 33.5631 30.625 31.0003 33.1878C28.4375 35.7506 28.4375 39.8754 28.4375 48.125V50.3125C28.4375 58.562 28.4375 62.6867 31.0003 65.2496C33.5631 67.8125 37.6879 67.8125 45.9375 67.8125H59.0625C67.312 67.8125 71.4367 67.8125 73.9996 65.2496C76.5625 62.6867 76.5625 58.562 76.5625 50.3125V48.125C76.5625 39.8754 76.5625 35.7506 73.9996 33.1878C71.4367 30.625 67.312 30.625 59.0625 30.625Z" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M39.375 30.625V21.875C39.375 14.6263 45.2511 8.75 52.5 8.75C59.7489 8.75 65.625 14.6263 65.625 21.875V30.625" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M59.0625 86.2439L45.9375 99.3689M45.9375 86.2439L59.0625 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M91.875 86.2439L78.75 99.3689M78.75 86.2439L91.875 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M26.25 86.2439L13.125 99.3689M13.125 86.2439L26.25 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="auth-title">
+          <h1>Autenticati</h1>
+          <p>Inserisci le tue credenziali classeviva per fare l'accesso</p>
+        </div>
+      </div>
+      <div class="auth-form-section">
+        <div style="padding: 1rem; padding-left: 0; padding-right: 0; width: 100%;">
+          <button id="pwaPromptBtn" class="pwa-prompt hidden">
+            <div class="pwa-prompt-bg"></div>
+            <div>
+              <p class="pwa-prompt-title">Installa l'applicazione!</p>
+              <p class="pwa-prompt-subtitle">Clicca per installare</p>
+            </div>
+            <i data-lucide="download" style="width: 24px; height: 24px;"></i>
+          </button>
+        </div>
+        <form id="loginForm" class="auth-form">
+          <div class="input-group" style="margin-top: 0;">
+            <label class="input-label">Nome utente</label>
+            <div class="input-wrapper">
+              <div class="input-bg"></div>
+              <input type="text" class="input-field" id="user_id" name="user_id" placeholder="G123456789P" required />
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <div class="input-wrapper">
+              <div class="input-bg"></div>
+              <input type="password" class="input-field" id="user_pass" name="user_pass" placeholder="••••••••••••••" required />
+            </div>
+          </div>
+          <span id="errorMessage" class="error-text"></span>
+          <button type="submit" id="loginButton" class="btn-primary">
+            <span id="loginText">Accesso</span>
+            <span id="loginLoader" class="loader hidden"></span>
+          </button>
+          <p class="auth-footer">
+            Non hai queste credenziali? <a href="https://web.spaggiari.eu/home/app/default/login.php" target="_blank"><u>recuperale</u></a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="main-app">
       <!-- Header -->
-      <div class="text-center text-white mb-4">
-        <h1 class="display-5 fw-bold">CVV Average Calculator</h1>
-        <p class="lead">Web Version - Works on iOS, Android & Desktop</p>
+      <div class="main-header">
+        <div class="main-header-bg"></div>
+        <h1>SysRegister</h1>
+        <p class="version">v2025.01.30</p>
       </div>
 
-      <!-- Login Page -->
-      <div id="loginPage">
-        <div class="row justify-content-center">
-          <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
-              <div class="card-body p-4">
-                <h2 class="card-title mb-3">Login to ClasseViva</h2>
+      <!-- Day Selector -->
+      <div class="day-selector-wrapper" style="transform: translateY(-1rem);">
+        <div class="day-selector-bg-1"></div>
+        <div class="day-selector-bg-2"></div>
+        <div id="daySelector" class="day-selector scrollbar-hidden"></div>
+      </div>
 
-                <div class="alert alert-info" role="alert">
-                  <strong><i class="bi bi-phone"></i> iOS Users:</strong><br />
-                  You can add this to your home screen! Tap the Share button and
-                  select "Add to Home Screen".
-                </div>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-padding">
+          <!-- PWA Prompt in main app -->
+          <button id="pwaPromptMain" class="pwa-prompt hidden">
+            <div class="pwa-prompt-bg"></div>
+            <div>
+              <p class="pwa-prompt-title">Installa l'applicazione!</p>
+              <p class="pwa-prompt-subtitle">Clicca per installare</p>
+            </div>
+            <i data-lucide="download" style="width: 24px; height: 24px;"></i>
+          </button>
 
-                <div
-                  id="errorMessage"
-                  class="alert alert-danger"
-                  style="display: none"
-                  role="alert"
-                ></div>
+          <!-- Lessons Link -->
+          <a id="lessonsLink" href="#" class="lessons-link hidden">
+            <div class="card-bg"></div>
+            <div>
+              <p class="lessons-title" id="lessonsTitle">Lezioni di oggi</p>
+              <p class="lessons-subtitle" id="lessonsSubtitle">0 firme da professori</p>
+            </div>
+            <i data-lucide="chevron-right" style="color: var(--secondary);"></i>
+          </a>
 
-                <form id="loginForm">
-                  <div class="mb-3">
-                    <label for="user_id" class="form-label">User ID:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="user_id"
-                      name="user_id"
-                      required
-                      autofocus
-                      placeholder="Enter your User ID"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="user_pass" class="form-label">Password:</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="user_pass"
-                      name="user_pass"
-                      required
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    id="loginButton"
-                    class="btn btn-primary w-100"
-                  >
-                    <span
-                      id="loginSpinner"
-                      class="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                      style="display: none"
-                    ></span>
-                    <span class="button-text">Login</span>
-                  </button>
-                </form>
-              </div>
+          <!-- Agenda Section -->
+          <p class="section-title">Agenda</p>
+          <div id="agendaContent">
+            <div id="agendaLoader" style="display: flex; justify-content: center; margin-top: 1rem;">
+              <div class="loader"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Grades Page -->
-      <div id="gradesPage" style="display: none">
-        <div class="text-center mb-4">
-          <button id="logoutButton" class="btn btn-secondary">
-            <i class="bi bi-box-arrow-right"></i> Logout
-          </button>
-        </div>
+      <!-- Navbar spacer -->
+      <div class="navbar-spacer"></div>
 
-        <div class="card shadow-lg mb-4">
-          <div class="card-body text-center">
-            <h2 class="card-title">Your Grade Averages</h2>
-            <div id="overallAverage" class="overall-average"></div>
-          </div>
+      <!-- Bottom Navbar -->
+      <nav class="navbar">
+        <div class="navbar-content">
+          <!-- Today -->
+          <a class="nav-link" data-section="home">
+            <div id="navDate" class="nav-date active">
+              <p id="navDateNum"></p>
+            </div>
+          </a>
+          <!-- Files -->
+          <a class="nav-link" data-section="files">
+            <i data-lucide="file" class="nav-icon" style="width: 30px; height: 30px;"></i>
+          </a>
+          <!-- Social -->
+          <a class="nav-link" data-section="social">
+            <i data-lucide="star" class="nav-icon" style="width: 32px; height: 32px;"></i>
+          </a>
+          <!-- Register -->
+          <a class="nav-link" data-section="register">
+            <i data-lucide="clipboard-list" class="nav-icon" style="width: 25px; height: 29px;"></i>
+          </a>
+          <!-- Profile -->
+          <a class="nav-link" data-section="profile">
+            <i data-lucide="user" class="nav-icon" style="width: 28px; height: 28px;"></i>
+          </a>
         </div>
-
-        <div id="gradesContent"></div>
-      </div>
+      </nav>
     </div>
-
-    <!-- Grade Details Modal -->
-    <div class="modal fade" id="gradeModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Grade Details</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Grade:</strong> <span id="modalGrade"></span></p>
-            <p><strong>Date:</strong> <span id="modalDate"></span></p>
-            <p><strong>Component:</strong> <span id="modalComponent"></span></p>
-            <p><strong>Teacher:</strong> <span id="modalTeacher"></span></p>
-            <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Load shared scripts -->
     <script src="../shared/config.js"></script>
     <script src="../shared/api.js"></script>
     <script src="../shared/calculator.js"></script>
-    <script src="../shared/ui-bootstrap.js"></script>
+    <script src="../shared/calendar-sync.js"></script>
+    <script src="../shared/ui-sysregister.js"></script>
   </body>
 </html>
