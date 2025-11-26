@@ -122,7 +122,8 @@ function displayGrades(gradesAvr) {
     tab.textContent = `Periodo ${period}`;
     tab.dataset.period = period;
     tab.onclick = () => {
-      document.querySelectorAll(".custom-tab").forEach((t) => t.classList.remove("active"));
+      // Use periodTabs reference instead of querySelectorAll for better performance
+      Array.from(periodTabs.children).forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
       displayPeriodGrades(gradesAvr, period);
     };
