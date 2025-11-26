@@ -1,752 +1,912 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" translate="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="StudentIntrest - Classifica voti, agenda, bacheca e molto altro da ClasseViva"
-    />
+    <meta name="description" content="SysRegister - Il tuo registro elettronico ClasseViva" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="theme-color" content="#667eea" />
-    <title>StudentIntrest - ClasseViva Dashboard</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#130909" />
+    <title>SysRegister</title>
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+      /* CSS Variables - matching sysregister-reborn exactly */
       :root {
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --card-bg: rgba(255, 255, 255, 0.95);
-        --text-muted: #6c757d;
+        --text: #f1e4e4;
+        --background: #130909;
+        --primary: #f03333;
+        --secondary: #7f2929;
+        --accent: #c83737;
       }
 
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        background: var(--primary-gradient);
-        min-height: 100vh;
-        padding: 0;
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        min-height: 100svh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      .app-container {
-        min-height: 100vh;
-        padding-bottom: 80px;
+      /* Scrollbar hidden utility */
+      .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hidden {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
       }
 
-      /* Navigation */
-      .bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        padding: 8px 0;
-      }
-
-      .nav-items {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        max-width: 500px;
-        margin: 0 auto;
-      }
-
-      .nav-item {
+      /* Auth Page Styles */
+      .auth-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 8px 12px;
-        color: var(--text-muted);
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 8px;
+        justify-content: center;
+        min-height: 100svh;
+        max-width: 32rem;
+        margin: 0 auto;
       }
 
-      .nav-item:hover,
-      .nav-item.active {
-        color: #667eea;
-        background: rgba(102, 126, 234, 0.1);
-      }
-
-      .nav-item i {
-        font-size: 1.5rem;
-        margin-bottom: 4px;
-      }
-
-      .nav-item span {
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-
-      /* Grade badges */
-      .grade-badge {
-        cursor: pointer;
-        transition: transform 0.2s;
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 6px;
-        margin: 2px;
-        font-weight: 600;
-      }
-
-      .grade-badge:hover {
-        transform: scale(1.1);
-      }
-
-      /* Overall average */
-      .overall-average {
-        font-size: 4rem;
-        font-weight: bold;
-      }
-
-      .period-average {
-        font-size: 2rem;
-        font-weight: bold;
-      }
-
-      /* Cards */
-      .feature-card {
-        background: var(--card-bg);
-        border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 16px;
+      .auth-icon-wrapper {
+        position: relative;
         overflow: hidden;
+        padding: 2.25rem;
+        border-radius: 55px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
       }
 
-      .feature-card .card-header {
-        background: transparent;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        padding: 16px 20px;
+      .auth-icon-bg {
+        background-color: var(--secondary);
+        position: absolute;
+        opacity: 0.45;
+        z-index: -1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
       }
 
-      .feature-card .card-header h5 {
+      .auth-title {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .auth-title h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--accent);
         margin: 0;
-        font-weight: 600;
+      }
+
+      .auth-title p {
+        color: var(--secondary);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+
+      .auth-form-section {
+        flex: 1;
         display: flex;
+        width: 100%;
+        padding: 0 1.5rem;
         align-items: center;
-        gap: 10px;
+        flex-direction: column;
+        justify-content: flex-end;
       }
 
-      .feature-card .card-body {
-        padding: 16px 20px;
+      .auth-form {
+        width: 100%;
       }
 
-      /* Page sections */
-      .page-section {
-        display: none;
-        padding: 20px;
-        padding-top: 10px;
-      }
-
-      .page-section.active {
+      /* Input Styles */
+      .input-label {
+        padding-bottom: 0.25rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--accent);
         display: block;
       }
 
-      /* Header */
-      .app-header {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        padding: 16px 20px;
-        color: white;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+      .input-wrapper {
+        overflow: hidden;
+        position: relative;
+        border-radius: 0.75rem;
       }
 
-      .app-header h1 {
-        font-size: 1.5rem;
+      .input-bg {
+        background-color: var(--secondary);
+        position: absolute;
+        z-index: -1;
+        opacity: 0.25;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .input-field {
+        background: transparent;
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        width: 100%;
+        color: var(--text);
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .input-field::placeholder {
+        color: var(--accent);
+        opacity: 0.35;
+      }
+
+      .input-field:focus {
+        outline: 2px solid var(--primary);
+      }
+
+      .input-group {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .input-group:first-child {
+        margin-top: 0;
+      }
+
+      /* Button Styles */
+      .btn-primary {
+        background-color: var(--primary);
+        color: var(--text);
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        width: 100%;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        margin-top: 1.75rem;
+      }
+
+      .btn-primary:hover {
+        opacity: 0.8;
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .error-text {
+        color: var(--accent);
+        text-align: left;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        width: 100%;
+      }
+
+      .auth-footer {
+        font-size: 0.875rem;
+        text-align: center;
+        color: var(--secondary);
+        padding: 1.25rem 0 2rem;
+      }
+
+      .auth-footer a {
+        color: var(--secondary);
+      }
+
+      /* Loader */
+      .loader {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--text);
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Main App Layout */
+      .main-app {
+        display: none;
+        overflow-x: hidden;
+      }
+
+      .main-header {
+        padding: 1.5rem;
+        position: relative;
+      }
+
+      .main-header-bg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--secondary);
+        opacity: 0.2;
+        z-index: -1;
+      }
+
+      .main-header h1 {
+        font-size: 1.875rem;
         font-weight: 700;
         margin: 0;
       }
 
-      .app-header .user-info {
+      .main-header .version {
+        color: var(--accent);
         font-size: 0.875rem;
-        opacity: 0.9;
       }
 
-      /* Login page */
-      .login-container {
+      /* Day Selector */
+      .day-selector-wrapper {
+        position: sticky;
+        z-index: 50;
+        top: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .day-selector-bg-1 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--secondary);
+        opacity: 0.2;
+        z-index: -1;
+      }
+
+      .day-selector-bg-2 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--background);
+        z-index: -2;
+      }
+
+      .day-selector {
+        display: flex;
+        overflow-x: auto;
+        padding: 1rem 0.5rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .day-btn {
+        display: flex;
+        flex-direction: column;
+        padding: 0 0.5rem;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      .day-btn .day-name {
+        color: var(--secondary);
+        width: 100%;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        justify-content: space-between;
+        font-size: 0.875rem;
+      }
+
+      .day-btn .day-number {
+        color: var(--accent);
+        position: relative;
+        text-align: center;
+        font-size: 1.125rem;
+        font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
-        padding: 20px;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0.625rem;
+        border-radius: 50%;
+        transition: all 0.2s;
       }
 
-      .login-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        padding: 40px;
-        width: 100%;
-        max-width: 420px;
-      }
-
-      .login-card .logo {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .login-card .logo i {
-        font-size: 4rem;
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .login-card h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #333;
-      }
-
-      /* Agenda items */
-      .agenda-item {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-        border-left: 4px solid #667eea;
-      }
-
-      .agenda-item .date {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-
-      .agenda-item .title {
-        font-weight: 600;
-        margin: 6px 0;
-      }
-
-      .agenda-item .author {
-        font-size: 0.875rem;
-        color: var(--text-muted);
-      }
-
-      /* Notes/Noticeboard items */
-      .notice-item {
-        background: #fff3cd;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-        border-left: 4px solid #ffc107;
-      }
-
-      .notice-item.unread {
-        background: #ffe8cc;
-        border-left-color: #fd7e14;
-      }
-
-      /* Absences */
-      .absence-item {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-      }
-
-      .absence-item.justified {
-        border-left: 4px solid #198754;
-      }
-
-      .absence-item.not-justified {
-        border-left: 4px solid #dc3545;
-      }
-
-      /* Goal calculator */
-      .goal-result {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      .day-btn .day-number.selected {
+        background-color: var(--primary);
         color: white;
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        margin-top: 20px;
       }
 
-      .goal-result .required-grade {
-        font-size: 3rem;
-        font-weight: bold;
+      .day-btn .today-dot {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        width: 0.375rem;
+        height: 0.375rem;
+        background-color: var(--primary);
       }
 
-      /* Stats */
-      .stat-card {
-        text-align: center;
-        padding: 20px;
+      /* Main Content */
+      .main-content {
+        max-width: 48rem;
+        min-height: calc(100svh - 86px - 204px);
+        margin: 0 auto;
+        transform: translateY(-1rem);
       }
 
-      .stat-card .stat-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #667eea;
+      .content-padding {
+        padding: 1rem;
       }
 
-      .stat-card .stat-label {
-        color: var(--text-muted);
+      /* Cards */
+      .card {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        position: relative;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .card-bg {
+        background-color: var(--secondary);
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin: 0;
+      }
+
+      .card-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Section Title */
+      .section-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Agenda Item */
+      .agenda-item {
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        overflow: hidden;
+        position: relative;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .agenda-item.completed {
+        opacity: 0.45;
+      }
+
+      .agenda-item-bg {
+        background-color: var(--secondary);
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .agenda-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .agenda-author {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .agenda-time {
+        color: var(--accent);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .agenda-time span {
+        opacity: 0.5;
         font-size: 0.875rem;
-        margin-top: 4px;
       }
 
-      /* Loading state */
-      .loading-overlay {
-        position: fixed;
+      .agenda-content {
+        position: relative;
+        overflow: hidden;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        margin-top: 0.75rem;
+      }
+
+      .agenda-content-bg {
+        position: absolute;
+        background-color: var(--accent);
+        z-index: -1;
+        opacity: 0.35;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(255, 255, 255, 0.9);
+      }
+
+      /* Checkbox */
+      .checkbox {
+        border-radius: 50%;
+        opacity: 0.5;
+        transition: all 0.2s;
+        border: 2px solid var(--accent);
+        height: 30px;
+        width: 30px;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
+        background: transparent;
+        cursor: pointer;
       }
 
-      .loading-overlay.hidden {
-        display: none;
+      .checkbox.checked {
+        background-color: var(--accent);
+      }
+
+      .checkbox svg {
+        color: var(--secondary);
+        transform: translateY(1px);
+      }
+
+      /* Empty State */
+      .empty-state {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        position: relative;
+        opacity: 0.5;
+        padding: 1rem;
+      }
+
+      .empty-state p {
+        color: var(--primary);
+        font-weight: 600;
+        text-align: center;
+        margin: 0;
+      }
+
+      /* Gauge */
+      .gauge {
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .gauge-border {
+        border-color: #525252;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 50%;
+        border-style: solid;
+      }
+
+      .gauge-value-border {
+        border-radius: 50%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-style: solid;
+      }
+
+      .gauge-value-border.red { border-color: #dc2626; }
+      .gauge-value-border.yellow { border-color: #ca8a04; }
+      .gauge-value-border.green { border-color: #16a34a; }
+      .gauge-value-border.gray { border-color: #4b5563; }
+
+      .gauge-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .gauge-value {
+        font-weight: 600;
+      }
+
+      .gauge-suffix {
+        font-weight: 400;
+      }
+
+      .gauge-label {
+        opacity: 0.7;
+      }
+
+      /* Line Progress */
+      .line-progress {
+        display: flex;
+        align-items: flex-start;
+        overflow: hidden;
+        flex-direction: column;
+      }
+
+      .line-progress-label {
+        font-weight: 600;
+        margin-bottom: 0.125rem;
+      }
+
+      .line-progress-bar {
+        position: relative;
+        width: 100%;
+        border-radius: 0.125rem;
+        overflow: hidden;
+      }
+
+      .line-progress-bg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: -1;
+        background-color: var(--secondary);
+        opacity: 0.3;
+      }
+
+      .line-progress-fill {
+        display: block;
+        text-align: right;
+      }
+
+      .line-progress-fill.red { background-color: #dc2626; }
+      .line-progress-fill.yellow { background-color: #ca8a04; }
+      .line-progress-fill.green { background-color: #16a34a; }
+
+      .line-progress-value {
+        font-weight: 600;
+        margin-right: 0.375rem;
+        margin-left: 0.375rem;
+      }
+
+      .line-progress-suffix {
+        font-size: 0.75rem;
+        font-weight: 400;
+      }
+
+      /* Bottom Navbar */
+      .navbar {
+        background-color: #000;
+        z-index: 50;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        box-shadow: 0 -10px 15px -3px var(--accent);
+      }
+
+      .navbar-content {
+        display: flex;
+        align-items: center;
+        padding-top: 1rem;
+        justify-content: space-around;
+      }
+
+      .nav-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .nav-date {
+        height: 28px;
+        width: 28px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        border: 2px solid white;
+        background: none;
+        color: white;
+      }
+
+      .nav-date.active {
+        border-color: var(--accent);
+        background-color: var(--accent);
+        color: black;
+      }
+
+      .nav-date p {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .nav-icon {
+        color: var(--text);
+      }
+
+      .nav-icon.active {
+        color: var(--primary);
+      }
+
+      /* Bottom spacing for navbar */
+      .navbar-spacer {
+        padding-top: 85px;
+      }
+
+      /* Install PWA Prompt */
+      .pwa-prompt {
+        border-radius: 0.75rem;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        position: relative;
+        padding: 1rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #9333ea;
+        color: white;
+        cursor: pointer;
+        border: none;
+        text-align: left;
+      }
+
+      .pwa-prompt:hover {
+        background-color: #7e22ce;
+      }
+
+      .pwa-prompt-bg {
+        background-color: #6b21a8;
+        z-index: -1;
+        opacity: 0.25;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .pwa-prompt-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .pwa-prompt-subtitle {
+        opacity: 0.8;
+        text-align: left;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      /* Lessons Link */
+      .lessons-link {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        position: relative;
+        padding: 1rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .lessons-title {
+        color: var(--text);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .lessons-subtitle {
+        opacity: 0.6;
+        color: var(--primary);
+        font-size: 0.875rem;
+        margin: 0;
       }
 
       /* Responsive */
-      @media (max-width: 576px) {
-        .overall-average {
-          font-size: 2.5rem;
-        }
-        .period-average {
-          font-size: 1.5rem;
-        }
-        .login-card {
-          padding: 24px;
-        }
-        .app-header h1 {
-          font-size: 1.25rem;
+      @media (max-width: 640px) {
+        .auth-title h1 {
+          font-size: 1.875rem;
         }
       }
 
-      /* Empty state */
-      .empty-state {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-muted);
-      }
-
-      .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-
-      /* Tabs */
-      .custom-tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 16px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-      }
-
-      .custom-tab {
-        padding: 8px 16px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-        white-space: nowrap;
-        transition: all 0.2s;
-      }
-
-      .custom-tab:hover,
-      .custom-tab.active {
-        background: white;
-        color: #667eea;
+      /* Hidden utility */
+      .hidden {
+        display: none !important;
       }
     </style>
   </head>
   <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-      <div class="text-center">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <!-- Auth Page -->
+    <div id="authPage" class="auth-container">
+      <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; flex: 1;">
+        <div class="auth-icon-wrapper">
+          <div class="auth-icon-bg"></div>
+          <svg width="100" height="100" viewBox="0 0 105 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M59.0625 30.625H45.9375C37.6879 30.625 33.5631 30.625 31.0003 33.1878C28.4375 35.7506 28.4375 39.8754 28.4375 48.125V50.3125C28.4375 58.562 28.4375 62.6867 31.0003 65.2496C33.5631 67.8125 37.6879 67.8125 45.9375 67.8125H59.0625C67.312 67.8125 71.4367 67.8125 73.9996 65.2496C76.5625 62.6867 76.5625 58.562 76.5625 50.3125V48.125C76.5625 39.8754 76.5625 35.7506 73.9996 33.1878C71.4367 30.625 67.312 30.625 59.0625 30.625Z" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M39.375 30.625V21.875C39.375 14.6263 45.2511 8.75 52.5 8.75C59.7489 8.75 65.625 14.6263 65.625 21.875V30.625" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M59.0625 86.2439L45.9375 99.3689M45.9375 86.2439L59.0625 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M91.875 86.2439L78.75 99.3689M78.75 86.2439L91.875 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M26.25 86.2439L13.125 99.3689M13.125 86.2439L26.25 99.3689" stroke="#F03333" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <p class="mt-3">Caricamento in corso...</p>
+        <div class="auth-title">
+          <h1>Autenticati</h1>
+          <p>Inserisci le tue credenziali classeviva per fare l'accesso</p>
+        </div>
       </div>
-    </div>
-
-    <!-- Login Page -->
-    <div id="loginPage" class="login-container">
-      <div class="login-card">
-        <div class="logo">
-          <i class="bi bi-mortarboard-fill"></i>
-        </div>
-        <h2>StudentIntrest</h2>
-        <p class="text-center text-muted mb-4">
-          Accedi con le tue credenziali ClasseViva
-        </p>
-
-        <div class="alert alert-info small" role="alert">
-          <i class="bi bi-phone"></i> <strong>iOS/Android:</strong> Aggiungi
-          alla schermata home per un'esperienza migliore!
-        </div>
-
-        <div
-          id="errorMessage"
-          class="alert alert-danger"
-          style="display: none"
-          role="alert"
-        ></div>
-
-        <form id="loginForm">
-          <div class="mb-3">
-            <label for="user_id" class="form-label">User ID</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-person"></i></span>
-              <input
-                type="text"
-                class="form-control"
-                id="user_id"
-                name="user_id"
-                required
-                autofocus
-                placeholder="Es: S1234567A"
-              />
+      <div class="auth-form-section">
+        <div style="padding: 1rem; padding-left: 0; padding-right: 0; width: 100%;">
+          <button id="pwaPromptBtn" class="pwa-prompt hidden">
+            <div class="pwa-prompt-bg"></div>
+            <div>
+              <p class="pwa-prompt-title">Installa l'applicazione!</p>
+              <p class="pwa-prompt-subtitle">Clicca per installare</p>
             </div>
-          </div>
-          <div class="mb-4">
-            <label for="user_pass" class="form-label">Password</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-lock"></i></span>
-              <input
-                type="password"
-                class="form-control"
-                id="user_pass"
-                name="user_pass"
-                required
-                placeholder="La tua password"
-              />
-            </div>
-          </div>
-          <button type="submit" id="loginButton" class="btn btn-primary w-100">
-            <span
-              id="loginSpinner"
-              class="spinner-border spinner-border-sm me-2"
-              role="status"
-              aria-hidden="true"
-              style="display: none"
-            ></span>
-            <span class="button-text">Accedi</span>
+            <i data-lucide="download" style="width: 24px; height: 24px;"></i>
           </button>
+        </div>
+        <form id="loginForm" class="auth-form">
+          <div class="input-group" style="margin-top: 0;">
+            <label class="input-label">Nome utente</label>
+            <div class="input-wrapper">
+              <div class="input-bg"></div>
+              <input type="text" class="input-field" id="user_id" name="user_id" placeholder="G123456789P" required />
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <div class="input-wrapper">
+              <div class="input-bg"></div>
+              <input type="password" class="input-field" id="user_pass" name="user_pass" placeholder="••••••••••••••" required />
+            </div>
+          </div>
+          <span id="errorMessage" class="error-text"></span>
+          <button type="submit" id="loginButton" class="btn-primary">
+            <span id="loginText">Accesso</span>
+            <span id="loginLoader" class="loader hidden"></span>
+          </button>
+          <p class="auth-footer">
+            Non hai queste credenziali? <a href="https://web.spaggiari.eu/home/app/default/login.php" target="_blank"><u>recuperale</u></a>
+          </p>
         </form>
-
-        <p class="text-center text-muted small mt-4 mb-0">
-          I tuoi dati non vengono salvati sui nostri server.
-        </p>
       </div>
     </div>
 
     <!-- Main App -->
-    <div id="mainApp" class="app-container" style="display: none">
+    <div id="mainApp" class="main-app">
       <!-- Header -->
-      <div class="app-header">
-        <div
-          class="d-flex justify-content-between align-items-center container"
-        >
-          <div>
-            <h1>StudentIntrest</h1>
-            <div id="userInfo" class="user-info"></div>
-          </div>
-          <button
-            id="logoutButton"
-            class="btn btn-outline-light btn-sm"
-            title="Logout"
-          >
-            <i class="bi bi-box-arrow-right"></i>
+      <div class="main-header">
+        <div class="main-header-bg"></div>
+        <h1>SysRegister</h1>
+        <p class="version">v2025.01.30</p>
+      </div>
+
+      <!-- Day Selector -->
+      <div class="day-selector-wrapper" style="transform: translateY(-1rem);">
+        <div class="day-selector-bg-1"></div>
+        <div class="day-selector-bg-2"></div>
+        <div id="daySelector" class="day-selector scrollbar-hidden"></div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-padding">
+          <!-- PWA Prompt in main app -->
+          <button id="pwaPromptMain" class="pwa-prompt hidden">
+            <div class="pwa-prompt-bg"></div>
+            <div>
+              <p class="pwa-prompt-title">Installa l'applicazione!</p>
+              <p class="pwa-prompt-subtitle">Clicca per installare</p>
+            </div>
+            <i data-lucide="download" style="width: 24px; height: 24px;"></i>
           </button>
-        </div>
-      </div>
 
-      <!-- Home Section -->
-      <div id="homeSection" class="page-section active container">
-        <div class="feature-card">
-          <div class="card-body text-center">
-            <h6 class="text-muted mb-2">Media Generale</h6>
-            <div id="overallAverage" class="overall-average text-success">
-              -
+          <!-- Lessons Link -->
+          <a id="lessonsLink" href="#" class="lessons-link hidden">
+            <div class="card-bg"></div>
+            <div>
+              <p class="lessons-title" id="lessonsTitle">Lezioni di oggi</p>
+              <p class="lessons-subtitle" id="lessonsSubtitle">0 firme da professori</p>
             </div>
-          </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="row g-3 mb-4">
-          <div class="col-4">
-            <div class="feature-card stat-card">
-              <div id="totalGradesCount" class="stat-value">-</div>
-              <div class="stat-label">Voti</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="feature-card stat-card">
-              <div id="totalSubjectsCount" class="stat-value">-</div>
-              <div class="stat-label">Materie</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="feature-card stat-card">
-              <div id="insufficientCount" class="stat-value text-danger">-</div>
-              <div class="stat-label">Insufficienze</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent grades preview -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-star-fill text-warning"></i> Ultimi Voti</h5>
-          </div>
-          <div class="card-body" id="recentGrades">
-            <div class="empty-state">
-              <i class="bi bi-inbox"></i>
-              <p>Nessun voto recente</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Grades Section -->
-      <div id="gradesSection" class="page-section container">
-        <div class="custom-tabs" id="periodTabs"></div>
-        <div id="gradesContent"></div>
-      </div>
-
-      <!-- Agenda Section -->
-      <div id="agendaSection" class="page-section container">
-        <div class="feature-card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5><i class="bi bi-calendar-event"></i> Agenda</h5>
-            <button id="exportCalendarBtn" class="btn btn-sm btn-outline-primary">
-              <i class="bi bi-download"></i> Esporta ICS
-            </button>
-          </div>
-          <div class="card-body" id="agendaContent">
-            <div class="empty-state">
-              <i class="bi bi-calendar-x"></i>
-              <p>Nessun evento in agenda</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bacheca Section -->
-      <div id="bachecaSection" class="page-section container">
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-megaphone"></i> Bacheca</h5>
-          </div>
-          <div class="card-body" id="noticeboardContent">
-            <div class="empty-state">
-              <i class="bi bi-inbox"></i>
-              <p>Nessun avviso in bacheca</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-exclamation-triangle text-warning"></i> Note</h5>
-          </div>
-          <div class="card-body" id="notesContent">
-            <div class="empty-state">
-              <i class="bi bi-check-circle text-success"></i>
-              <p>Nessuna nota disciplinare</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- More Section -->
-      <div id="moreSection" class="page-section container">
-        <!-- Goal Calculator -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-bullseye text-danger"></i> Calcola Obiettivo</h5>
-          </div>
-          <div class="card-body">
-            <p class="text-muted small">
-              Calcola che voto ti serve per raggiungere la media desiderata
-            </p>
-            <div class="mb-3">
-              <label for="goalPeriod" class="form-label">Periodo</label>
-              <select class="form-select" id="goalPeriod">
-                <option value="">Seleziona periodo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="goalSubject" class="form-label">Materia</label>
-              <select class="form-select" id="goalSubject">
-                <option value="">Seleziona materia</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="goalTarget" class="form-label">Media Obiettivo</label>
-              <input
-                type="number"
-                class="form-control"
-                id="goalTarget"
-                min="1"
-                max="10"
-                step="0.1"
-                placeholder="Es: 7.0"
-              />
-            </div>
-            <button id="calculateGoalBtn" class="btn btn-primary w-100">
-              Calcola
-            </button>
-            <div id="goalResult" style="display: none"></div>
-          </div>
-        </div>
-
-        <!-- Export -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-download"></i> Esporta Dati</h5>
-          </div>
-          <div class="card-body">
-            <button id="exportCSVBtn" class="btn btn-outline-primary w-100 mb-2">
-              <i class="bi bi-file-earmark-spreadsheet"></i> Esporta Voti (CSV)
-            </button>
-            <button
-              id="exportAgendaBtn"
-              class="btn btn-outline-primary w-100"
-            >
-              <i class="bi bi-calendar"></i> Esporta Agenda (ICS)
-            </button>
-          </div>
-        </div>
-
-        <!-- Absences -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-person-x"></i> Assenze</h5>
-          </div>
-          <div class="card-body" id="absencesContent">
-            <div class="empty-state">
-              <i class="bi bi-check-circle text-success"></i>
-              <p>Nessuna assenza registrata</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Didactics -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-book"></i> Didattica</h5>
-          </div>
-          <div class="card-body" id="didacticsContent">
-            <div class="empty-state">
-              <i class="bi bi-folder2-open"></i>
-              <p>Nessun materiale didattico</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Info -->
-        <div class="feature-card">
-          <div class="card-header">
-            <h5><i class="bi bi-info-circle"></i> Informazioni</h5>
-          </div>
-          <div class="card-body">
-            <p class="mb-2"><strong>StudentIntrest</strong></p>
-            <p class="text-muted small mb-2">
-              Integrazione di sysregister-reborn, chemediaho e CVVCalendarSync.
-            </p>
-            <p class="text-muted small mb-0">
-              Versione 2.0.0 - Made with <i class="bi bi-heart-fill text-danger"></i>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Navigation -->
-      <nav class="bottom-nav">
-        <div class="nav-items">
-          <a class="nav-item active" data-section="homeSection">
-            <i class="bi bi-house-fill"></i>
-            <span>Home</span>
+            <i data-lucide="chevron-right" style="color: var(--secondary);"></i>
           </a>
-          <a class="nav-item" data-section="gradesSection">
-            <i class="bi bi-bar-chart-fill"></i>
-            <span>Voti</span>
+
+          <!-- Agenda Section -->
+          <p class="section-title">Agenda</p>
+          <div id="agendaContent">
+            <div id="agendaLoader" style="display: flex; justify-content: center; margin-top: 1rem;">
+              <i data-lucide="loader" class="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navbar spacer -->
+      <div class="navbar-spacer"></div>
+
+      <!-- Bottom Navbar -->
+      <nav class="navbar">
+        <div class="navbar-content">
+          <!-- Today -->
+          <a class="nav-link" data-section="home">
+            <div id="navDate" class="nav-date active">
+              <p id="navDateNum"></p>
+            </div>
           </a>
-          <a class="nav-item" data-section="agendaSection">
-            <i class="bi bi-calendar-fill"></i>
-            <span>Agenda</span>
+          <!-- Files -->
+          <a class="nav-link" data-section="files">
+            <i data-lucide="file" class="nav-icon" style="width: 30px; height: 30px;"></i>
           </a>
-          <a class="nav-item" data-section="bachecaSection">
-            <i class="bi bi-megaphone-fill"></i>
-            <span>Bacheca</span>
+          <!-- Social -->
+          <a class="nav-link" data-section="social">
+            <i data-lucide="star" class="nav-icon" style="width: 32px; height: 32px;"></i>
           </a>
-          <a class="nav-item" data-section="moreSection">
-            <i class="bi bi-three-dots"></i>
-            <span>Altro</span>
+          <!-- Register -->
+          <a class="nav-link" data-section="register">
+            <i data-lucide="clipboard-list" class="nav-icon" style="width: 25px; height: 29px;"></i>
+          </a>
+          <!-- Profile -->
+          <a class="nav-link" data-section="profile">
+            <i data-lucide="user" class="nav-icon" style="width: 28px; height: 28px;"></i>
           </a>
         </div>
       </nav>
     </div>
-
-    <!-- Grade Details Modal -->
-    <div class="modal fade" id="gradeModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Dettagli Voto</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Voto:</strong> <span id="modalGrade"></span></p>
-            <p><strong>Data:</strong> <span id="modalDate"></span></p>
-            <p><strong>Tipo:</strong> <span id="modalComponent"></span></p>
-            <p><strong>Docente:</strong> <span id="modalTeacher"></span></p>
-            <p><strong>Note:</strong> <span id="modalNotes"></span></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Load shared scripts -->
     <script src="../shared/config.js"></script>
     <script src="../shared/api.js"></script>
     <script src="../shared/calculator.js"></script>
     <script src="../shared/calendar-sync.js"></script>
-    <script src="../shared/ui-bootstrap.js"></script>
+    <script src="../shared/ui-sysregister.js"></script>
   </body>
 </html>
