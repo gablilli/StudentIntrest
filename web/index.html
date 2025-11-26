@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Calculate your ClasseViva grade averages - Works on iOS, Android, and Desktop"
+      content="StudentIntrest - Classifica voti, agenda, bacheca e molto altro da ClasseViva"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
     />
-    <title>CVV Average Calculator</title>
+    <meta name="theme-color" content="#667eea" />
+    <title>StudentIntrest - ClasseViva Dashboard</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -25,21 +26,94 @@
     />
 
     <style>
-      body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px 0;
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --text-muted: #6c757d;
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--primary-gradient);
+        min-height: 100vh;
+        padding: 0;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      .app-container {
+        min-height: 100vh;
+        padding-bottom: 80px;
+      }
+
+      /* Navigation */
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 8px 0;
+      }
+
+      .nav-items {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 12px;
+        color: var(--text-muted);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 8px;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .nav-item i {
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+      }
+
+      .nav-item span {
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      /* Grade badges */
       .grade-badge {
         cursor: pointer;
         transition: transform 0.2s;
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        margin: 2px;
+        font-weight: 600;
       }
 
       .grade-badge:hover {
         transform: scale(1.1);
       }
 
+      /* Overall average */
       .overall-average {
         font-size: 4rem;
         font-weight: bold;
@@ -50,6 +124,211 @@
         font-weight: bold;
       }
 
+      /* Cards */
+      .feature-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .feature-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 16px 20px;
+      }
+
+      .feature-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .feature-card .card-body {
+        padding: 16px 20px;
+      }
+
+      /* Page sections */
+      .page-section {
+        display: none;
+        padding: 20px;
+        padding-top: 10px;
+      }
+
+      .page-section.active {
+        display: block;
+      }
+
+      /* Header */
+      .app-header {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 16px 20px;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .app-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .app-header .user-info {
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+
+      /* Login page */
+      .login-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .login-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .login-card .logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .login-card .logo i {
+        font-size: 4rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .login-card h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      /* Agenda items */
+      .agenda-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-left: 4px solid #667eea;
+      }
+
+      .agenda-item .date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .agenda-item .title {
+        font-weight: 600;
+        margin: 6px 0;
+      }
+
+      .agenda-item .author {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      /* Notes/Noticeboard items */
+      .notice-item {
+        background: #fff3cd;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-left: 4px solid #ffc107;
+      }
+
+      .notice-item.unread {
+        background: #ffe8cc;
+        border-left-color: #fd7e14;
+      }
+
+      /* Absences */
+      .absence-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .absence-item.justified {
+        border-left: 4px solid #198754;
+      }
+
+      .absence-item.not-justified {
+        border-left: 4px solid #dc3545;
+      }
+
+      /* Goal calculator */
+      .goal-result {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .goal-result .required-grade {
+        font-size: 3rem;
+        font-weight: bold;
+      }
+
+      /* Stats */
+      .stat-card {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+      }
+
+      .stat-card .stat-label {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-top: 4px;
+      }
+
+      /* Loading state */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      .loading-overlay.hidden {
+        display: none;
+      }
+
+      /* Responsive */
       @media (max-width: 576px) {
         .overall-average {
           font-size: 2.5rem;
@@ -57,100 +336,384 @@
         .period-average {
           font-size: 1.5rem;
         }
+        .login-card {
+          padding: 24px;
+        }
+        .app-header h1 {
+          font-size: 1.25rem;
+        }
+      }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      /* Tabs */
+      .custom-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+
+      .custom-tab {
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+
+      .custom-tab:hover,
+      .custom-tab.active {
+        background: white;
+        color: #667eea;
       }
     </style>
   </head>
   <body>
-    <div class="container">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Caricamento in corso...</p>
+      </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+      <div class="login-card">
+        <div class="logo">
+          <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <h2>StudentIntrest</h2>
+        <p class="text-center text-muted mb-4">
+          Accedi con le tue credenziali ClasseViva
+        </p>
+
+        <div class="alert alert-info small" role="alert">
+          <i class="bi bi-phone"></i> <strong>iOS/Android:</strong> Aggiungi
+          alla schermata home per un'esperienza migliore!
+        </div>
+
+        <div
+          id="errorMessage"
+          class="alert alert-danger"
+          style="display: none"
+          role="alert"
+        ></div>
+
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="user_id" class="form-label">User ID</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                id="user_id"
+                name="user_id"
+                required
+                autofocus
+                placeholder="Es: S1234567A"
+              />
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="user_pass" class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input
+                type="password"
+                class="form-control"
+                id="user_pass"
+                name="user_pass"
+                required
+                placeholder="La tua password"
+              />
+            </div>
+          </div>
+          <button type="submit" id="loginButton" class="btn btn-primary w-100">
+            <span
+              id="loginSpinner"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+              style="display: none"
+            ></span>
+            <span class="button-text">Accedi</span>
+          </button>
+        </form>
+
+        <p class="text-center text-muted small mt-4 mb-0">
+          I tuoi dati non vengono salvati sui nostri server.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="app-container" style="display: none">
       <!-- Header -->
-      <div class="text-center text-white mb-4">
-        <h1 class="display-5 fw-bold">CVV Average Calculator</h1>
-        <p class="lead">Web Version - Works on iOS, Android & Desktop</p>
+      <div class="app-header">
+        <div
+          class="d-flex justify-content-between align-items-center container"
+        >
+          <div>
+            <h1>StudentIntrest</h1>
+            <div id="userInfo" class="user-info"></div>
+          </div>
+          <button
+            id="logoutButton"
+            class="btn btn-outline-light btn-sm"
+            title="Logout"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- Login Page -->
-      <div id="loginPage">
-        <div class="row justify-content-center">
-          <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
-              <div class="card-body p-4">
-                <h2 class="card-title mb-3">Login to ClasseViva</h2>
+      <!-- Home Section -->
+      <div id="homeSection" class="page-section active container">
+        <div class="feature-card">
+          <div class="card-body text-center">
+            <h6 class="text-muted mb-2">Media Generale</h6>
+            <div id="overallAverage" class="overall-average text-success">
+              -
+            </div>
+          </div>
+        </div>
 
-                <div class="alert alert-info" role="alert">
-                  <strong><i class="bi bi-phone"></i> iOS Users:</strong><br />
-                  You can add this to your home screen! Tap the Share button and
-                  select "Add to Home Screen".
-                </div>
+        <!-- Quick Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-4">
+            <div class="feature-card stat-card">
+              <div id="totalGradesCount" class="stat-value">-</div>
+              <div class="stat-label">Voti</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="feature-card stat-card">
+              <div id="totalSubjectsCount" class="stat-value">-</div>
+              <div class="stat-label">Materie</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="feature-card stat-card">
+              <div id="insufficientCount" class="stat-value text-danger">-</div>
+              <div class="stat-label">Insufficienze</div>
+            </div>
+          </div>
+        </div>
 
-                <div
-                  id="errorMessage"
-                  class="alert alert-danger"
-                  style="display: none"
-                  role="alert"
-                ></div>
-
-                <form id="loginForm">
-                  <div class="mb-3">
-                    <label for="user_id" class="form-label">User ID:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="user_id"
-                      name="user_id"
-                      required
-                      autofocus
-                      placeholder="Enter your User ID"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="user_pass" class="form-label">Password:</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="user_pass"
-                      name="user_pass"
-                      required
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    id="loginButton"
-                    class="btn btn-primary w-100"
-                  >
-                    <span
-                      id="loginSpinner"
-                      class="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                      style="display: none"
-                    ></span>
-                    <span class="button-text">Login</span>
-                  </button>
-                </form>
-              </div>
+        <!-- Recent grades preview -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-star-fill text-warning"></i> Ultimi Voti</h5>
+          </div>
+          <div class="card-body" id="recentGrades">
+            <div class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <p>Nessun voto recente</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Grades Page -->
-      <div id="gradesPage" style="display: none">
-        <div class="text-center mb-4">
-          <button id="logoutButton" class="btn btn-secondary">
-            <i class="bi bi-box-arrow-right"></i> Logout
-          </button>
-        </div>
+      <!-- Grades Section -->
+      <div id="gradesSection" class="page-section container">
+        <div class="custom-tabs" id="periodTabs"></div>
+        <div id="gradesContent"></div>
+      </div>
 
-        <div class="card shadow-lg mb-4">
-          <div class="card-body text-center">
-            <h2 class="card-title">Your Grade Averages</h2>
-            <div id="overallAverage" class="overall-average"></div>
+      <!-- Agenda Section -->
+      <div id="agendaSection" class="page-section container">
+        <div class="feature-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="bi bi-calendar-event"></i> Agenda</h5>
+            <button id="exportCalendarBtn" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-download"></i> Esporta ICS
+            </button>
+          </div>
+          <div class="card-body" id="agendaContent">
+            <div class="empty-state">
+              <i class="bi bi-calendar-x"></i>
+              <p>Nessun evento in agenda</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bacheca Section -->
+      <div id="bachecaSection" class="page-section container">
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-megaphone"></i> Bacheca</h5>
+          </div>
+          <div class="card-body" id="noticeboardContent">
+            <div class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <p>Nessun avviso in bacheca</p>
+            </div>
           </div>
         </div>
 
-        <div id="gradesContent"></div>
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-exclamation-triangle text-warning"></i> Note</h5>
+          </div>
+          <div class="card-body" id="notesContent">
+            <div class="empty-state">
+              <i class="bi bi-check-circle text-success"></i>
+              <p>Nessuna nota disciplinare</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- More Section -->
+      <div id="moreSection" class="page-section container">
+        <!-- Goal Calculator -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-bullseye text-danger"></i> Calcola Obiettivo</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted small">
+              Calcola che voto ti serve per raggiungere la media desiderata
+            </p>
+            <div class="mb-3">
+              <label for="goalPeriod" class="form-label">Periodo</label>
+              <select class="form-select" id="goalPeriod">
+                <option value="">Seleziona periodo</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="goalSubject" class="form-label">Materia</label>
+              <select class="form-select" id="goalSubject">
+                <option value="">Seleziona materia</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="goalTarget" class="form-label">Media Obiettivo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="goalTarget"
+                min="1"
+                max="10"
+                step="0.1"
+                placeholder="Es: 7.0"
+              />
+            </div>
+            <button id="calculateGoalBtn" class="btn btn-primary w-100">
+              Calcola
+            </button>
+            <div id="goalResult" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- Export -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-download"></i> Esporta Dati</h5>
+          </div>
+          <div class="card-body">
+            <button id="exportCSVBtn" class="btn btn-outline-primary w-100 mb-2">
+              <i class="bi bi-file-earmark-spreadsheet"></i> Esporta Voti (CSV)
+            </button>
+            <button
+              id="exportAgendaBtn"
+              class="btn btn-outline-primary w-100"
+            >
+              <i class="bi bi-calendar"></i> Esporta Agenda (ICS)
+            </button>
+          </div>
+        </div>
+
+        <!-- Absences -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-person-x"></i> Assenze</h5>
+          </div>
+          <div class="card-body" id="absencesContent">
+            <div class="empty-state">
+              <i class="bi bi-check-circle text-success"></i>
+              <p>Nessuna assenza registrata</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Didactics -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-book"></i> Didattica</h5>
+          </div>
+          <div class="card-body" id="didacticsContent">
+            <div class="empty-state">
+              <i class="bi bi-folder2-open"></i>
+              <p>Nessun materiale didattico</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="feature-card">
+          <div class="card-header">
+            <h5><i class="bi bi-info-circle"></i> Informazioni</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-2"><strong>StudentIntrest</strong></p>
+            <p class="text-muted small mb-2">
+              Integrazione di sysregister-reborn, chemediaho e CVVCalendarSync.
+            </p>
+            <p class="text-muted small mb-0">
+              Versione 2.0.0 - Made with <i class="bi bi-heart-fill text-danger"></i>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <div class="nav-items">
+          <a class="nav-item active" data-section="homeSection">
+            <i class="bi bi-house-fill"></i>
+            <span>Home</span>
+          </a>
+          <a class="nav-item" data-section="gradesSection">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Voti</span>
+          </a>
+          <a class="nav-item" data-section="agendaSection">
+            <i class="bi bi-calendar-fill"></i>
+            <span>Agenda</span>
+          </a>
+          <a class="nav-item" data-section="bachecaSection">
+            <i class="bi bi-megaphone-fill"></i>
+            <span>Bacheca</span>
+          </a>
+          <a class="nav-item" data-section="moreSection">
+            <i class="bi bi-three-dots"></i>
+            <span>Altro</span>
+          </a>
+        </div>
+      </nav>
     </div>
 
     <!-- Grade Details Modal -->
@@ -158,7 +721,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Grade Details</h5>
+            <h5 class="modal-title">Dettagli Voto</h5>
             <button
               type="button"
               class="btn-close"
@@ -166,11 +729,11 @@
             ></button>
           </div>
           <div class="modal-body">
-            <p><strong>Grade:</strong> <span id="modalGrade"></span></p>
-            <p><strong>Date:</strong> <span id="modalDate"></span></p>
-            <p><strong>Component:</strong> <span id="modalComponent"></span></p>
-            <p><strong>Teacher:</strong> <span id="modalTeacher"></span></p>
-            <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+            <p><strong>Voto:</strong> <span id="modalGrade"></span></p>
+            <p><strong>Data:</strong> <span id="modalDate"></span></p>
+            <p><strong>Tipo:</strong> <span id="modalComponent"></span></p>
+            <p><strong>Docente:</strong> <span id="modalTeacher"></span></p>
+            <p><strong>Note:</strong> <span id="modalNotes"></span></p>
           </div>
         </div>
       </div>
@@ -183,6 +746,7 @@
     <script src="../shared/config.js"></script>
     <script src="../shared/api.js"></script>
     <script src="../shared/calculator.js"></script>
+    <script src="../shared/calendar-sync.js"></script>
     <script src="../shared/ui-bootstrap.js"></script>
   </body>
 </html>
